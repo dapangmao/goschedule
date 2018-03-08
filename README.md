@@ -6,26 +6,16 @@
 
 ```go
 type Job struct {
-    fn func()
-    kind jobKind
-    timer *time
-    period time.Duration
-    command chan string
+    command chan interface{}
+    url string
+    selector map[string]string
+    isStopped bool
+    id int
 }
 
-type JobInterface interface {
-    updateTime() 
-    startTime()
-}
+func (j *job) run()
+
+func (j *job) crawl [][]string 
 
 ```
 
-- Scheduler
-
-```go 
-
-type Scheduler struct {
-    funcMap map[string]*Job
-    funcArray []*Job 
-
-}
