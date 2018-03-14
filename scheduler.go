@@ -5,7 +5,13 @@ import (
 	"time"
 	"github.com/PuerkitoBio/goquery"
 	"fmt"
+	"log"
 )
+
+type command struct {
+	j *Job
+	cmd string
+}
 
 type scheduled interface {
 	nextRun() (time.Duration, error)
@@ -143,11 +149,17 @@ func (s *Scheduler) RunJob(j *Job, cmdChan<- chan string)  {
 
 
 func crawl() {
-	doc, _ := goquery.NewDocument("http://metalsucks.net")
-	doc.Find(".sidebar-reviews article .content-block").Each(func(i int, s *goquery.Selection) {
+	doc, err := goquery.NewDocument("http://metalsucks.net")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Find the review items
+	doc.Find(".sidebar-reviews article .content-block a").Each(func(i int, s *goquery.Selection) {
 		// For each item found, get the band and title
-		band := s.Find("a").Text()
-		title := s.Find("i").Text()
-		fmt.Printf("Review %d: %s - %s\n", i, band, title)
+		band := s.Text()
+		//title := s.Find("i").Text()
+		//fmt.Printf("Review %d: %s - %s\n", i, band, title)
+		fmt.Println(band)
 	})
 }
