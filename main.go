@@ -24,7 +24,6 @@ var sched2ui = make(chan ErrorMsg)
 
 
 
-
 func main() {
 	crawl()
 }
