@@ -1,29 +1,19 @@
 package main
 
-var ui2sched = make(chan command)
-var sched2ui = make(chan ErrorMsg)
+import "fmt"
 
 
-//func helloHandle(w http.ResponseWriter, r *http.Request) {
-//	key, ok := r.URL.Query()["key"]
-//	if ok {
-//		ui2sched  <- strings.Join(key, "")
-//	}
-//	fmt.Fprintf(w, "Hello World, you reached %s \n", r.URL.Path)
-//}
+type test struct {
+	a int
+	b int
+}
 
-//
-//func main() {
-//
-//
-//	//http.HandleFunc("/", helloHandle)
-//	http.ListenAndServe(":8011", nil)
-//
-//}
-
-
+func (t *test) sum() int {
+	return t.a + t.b
+}
 
 
 func main() {
-	crawl()
+	a := &test{1, 2}
+	fmt.Println(a.sum())
 }
