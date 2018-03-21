@@ -1,7 +1,6 @@
 package main
 
 import (
-<<<<<<< HEAD
 	"time"
 )
 
@@ -11,20 +10,6 @@ var sched2ui = make(chan Feedback)
 
 
 type Command struct {
-=======
-	"errors"
-	"time"
-	"strings"
-	"strconv"
-)
-
-
-var ui2sched = make(chan command)
-var sched2ui = make(chan ErrorMsg)
-
-
-type command struct {
->>>>>>> f55b5065742085b2978640078bbe76342b8994e9
 	j   *Job
 	cmd string
 }
@@ -69,11 +54,7 @@ func (d daily) nextRun() time.Duration{
 
 type weekly struct {
 	day time.Weekday
-<<<<<<< HEAD
 	d   *daily
-=======
-	d   daily
->>>>>>> f55b5065742085b2978640078bbe76342b8994e9
 }
 
 func (w weekly) nextRun() time.Duration {
@@ -89,13 +70,8 @@ func (w weekly) nextRun() time.Duration {
 	return date.Sub(now)
 }
 
-<<<<<<< HEAD
 type Feedback struct {
 	message string
-=======
-type ErrorMsg struct {
-	err error
->>>>>>> f55b5065742085b2978640078bbe76342b8994e9
 	id  int
 }
 
@@ -156,69 +132,10 @@ func (s *Scheduler) RunJob(j *Job, jobCmdChan <-chan string) {
 				go fetch()
 				next= j.sched.nextRun()
 			}
-<<<<<<< HEAD
 			if j.isOneTime {
 				return
 			}
-=======
-		}
-		if j.isOneTime {
-			return
->>>>>>> f55b5065742085b2978640078bbe76342b8994e9
 		}
 	}
 }
 
-<<<<<<< HEAD
-=======
-// every 5 hours
-// every day at 10:30am
-// every monday at 10:30
-func Parse(s string, id int) (*Job, error) {
-	notValid:
-		return nil, errors.New("Not a valid input format for a job.")
-	n := len(s)
-	if n == 0 {goto notValid}
-	s = strings.ToLower(s)
-	splits := strings.Split(s, " ")
-	if len(splits) < 2 {goto notValid}
-
-	if !strings.Contains(s, "at") {
-		isOneTime := true
-		q, u := splits[0], splits[1]
-		if splits[0] == "every" {
-			q, u = splits[1], splits[2]
-			isOneTime = false
-		}
-		quantity, err := strconv.Atoi(q)
-		if err != nil {goto notValid}
-		var unit time.Duration
-		switch u {
-		case "hour":
-			unit = time.Hour
-		case "minute":
-			unit = time.Minute
-		case "second":
-			unit = time.Second
-		default:
-			goto notValid
-		}
-		current := &Job{id, &recurrent{quantity, unit}, false, isOneTime}
-		return current, nil
-	}
-
-	if strings.Contains(s, "day") {
-		idx := 0
-		for i, x := range splits {
-			if x == "at" || x == "on" {
-				idx = i
-				break
-			}
-		}
-
-	}
-
-
-
-}
->>>>>>> f55b5065742085b2978640078bbe76342b8994e9
