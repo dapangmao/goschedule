@@ -8,8 +8,8 @@ var stats = make(map[int]Feedback)
 
 
 func getStats() {
-	for x := range sched2ui {
-		stats[x.id] = x
+	for fb := range sched2ui {
+		stats[fb.id] = fb
 	}
 }
 

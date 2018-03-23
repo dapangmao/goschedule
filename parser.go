@@ -66,7 +66,17 @@ func (p *Parser) parseDaily(time string) (*daily, error) {
 			i++
 		}
 	}
-	return &daily{timeArray[0], timeArray[1], timeArray[2]}, nil
+	hour, minute, second := timeArray[0], timeArray[1], timeArray[2]
+	if hour < 0 || hour > 23 {
+		return nil, errors.New("Not a valid input format for a daily job scheduler - hour.")
+	}
+	if minute < 0 || minute > 59 {
+		return nil, errors.New("Not a valid input format for a daily job scheduler - minute.")
+	}
+	if second < 0 || second > 59 {
+		return nil, errors.New("Not a valid input format for a daily job scheduler - second.")
+	}
+	return &daily{hour, minute, second}, nil
 }
 
 

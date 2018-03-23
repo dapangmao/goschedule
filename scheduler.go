@@ -5,7 +5,6 @@ import (
 )
 
 
-
 const (
 	remove = "remove"
 	add = "add"
@@ -14,7 +13,6 @@ const (
 	runNow = "runNow"
 	update = "update"
 )
-
 
 
 var timeAfter = time.After
@@ -27,6 +25,8 @@ type Command struct {
 	cmd string
 }
 
+
+
 type scheduled interface {
 	nextRun() time.Duration
 }
@@ -38,6 +38,8 @@ type Job struct {
 	isStopped bool
 	isOneTime bool
 }
+
+
 
 type recurrent struct {
 	quantity int
@@ -131,20 +133,20 @@ func (s *Scheduler) RunJob(j *Job, jobCmdChan <- chan string) {
 	for {
 		select {
 		case cmd := <- jobCmdChan:
+			sched2ui <- Feedback{cmd , time.Now(),j.id}
 			switch cmd {
 			case stop:
 				j.isStopped = true
 			case restart:
 				j.isStopped = false
 			case runNow:
-				go fetch()
+				go fetch(j.id)
 			case remove:
 				return
 			}
-			sched2ui <- Feedback{cmd , time.Now(),j.id}
 		case <- timeAfter(next):
 			if !j.isStopped {
-				go Fetch()
+				go Fetch(j.id)
 				next= j.sched.nextRun()
 			}
 			if j.isOneTime {

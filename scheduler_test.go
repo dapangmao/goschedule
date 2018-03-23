@@ -6,10 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var id = 1
 
 func init() {
-	Fetch = func() {
+	Fetch = func(id int) {
 		sched2ui <- Feedback{"fetched", time.Now(), id}
 	}
 
@@ -18,37 +17,48 @@ func init() {
 	}
 }
 
-
-
 func TestScheduler(t *testing.T) {
 
-	id = 1
+	var id = 1
 	sched := NewScheduler()
 	go sched.Serve()
-
-	go func(){
-		var j int
-		var wanted = []string{"add",  "stop", "restart",  "fetched",   "add", "fetched"}
-		for x := range sched2ui {
-			assert.Equal(t, x.message, wanted[j])
-			t.Log(x)
-			j++
-		}
-	}()
+	go getStats()
 
 	s := "every 5 hour"
 	p := Parser{id, s}
 	job, _ := p.Parse()
-	
+
 	ui2sched <- Command{job, add}
 	ui2sched <- Command{job, stop}
 	ui2sched <- Command{job, restart}
 
-	time.Sleep(time.Second * 1)
-
 	s = "every 10 hour"
-	p = Parser{1, s}
+	p = Parser{id, s}
 	job, _ = p.Parse()
 	ui2sched <- Command{job, update}
+
+	id = 2
+	s = "every Monday 10:30"
+	p = Parser{id, s}
+	job, _ = p.Parse()
+	ui2sched <- Command{job, add}
+
+	id = 3
+	s = "every 2:30:4"
+	p = Parser{id, s}
+	job, _ = p.Parse()
+	ui2sched <- Command{job, add}
+
 	time.Sleep(time.Second * 1)
+
+	job = &Job{1, nil, false, false}
+	ui2sched <- Command{job, remove}
+
+	t.Log("Debug the result map", stats)
+
+	assert.Equal(t, stats[1].message, "remove")
+	assert.Equal(t, stats[2].message, "fetched")
+	assert.Equal(t, stats[3].message, "fetched")
+	assert.Equal(t, len(sched.jobMap), 2)
+
 }

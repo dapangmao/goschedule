@@ -9,7 +9,7 @@ import (
 
 var Fetch = fetch
 
-func fetch() {
+func fetch(id int) {
 	doc, err := goquery.NewDocument("http://metalsucks.net")
 	if err != nil {
 		log.Fatal(err)
