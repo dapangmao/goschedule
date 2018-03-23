@@ -95,6 +95,10 @@ type Scheduler struct {
 	jobMap map[int]chan string
 }
 
+func NewNilJob(id int) *Job {
+	return &Job{id, nil, false, false}
+}
+
 
 func NewScheduler() *Scheduler {
 	j := make(map[int]chan string)

@@ -51,7 +51,7 @@ func TestScheduler(t *testing.T) {
 
 	time.Sleep(time.Second * 1)
 
-	job = &Job{1, nil, false, false}
+	job = NewNilJob(1)
 	ui2sched <- Command{job, remove}
 
 	t.Log("Debug the result map", stats)
