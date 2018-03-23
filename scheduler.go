@@ -5,6 +5,19 @@ import (
 )
 
 
+
+const (
+	remove = "remove"
+	add = "add"
+	stop = "stop"
+	restart = "restart"
+	runNow = "runNow"
+	update = "update"
+)
+
+
+
+var timeAfter = time.After
 var ui2sched = make(chan Command)
 var sched2ui = make(chan Feedback)
 
@@ -72,6 +85,7 @@ func (w weekly) nextRun() time.Duration {
 
 type Feedback struct {
 	message string
+	time time.Time
 	id  int
 }
 
@@ -90,17 +104,18 @@ func (s *Scheduler) runNewJob(job *Job) {
 	var newJobChan = make(chan string)
 	s.jobMap[job.id] = newJobChan
 	go s.RunJob(job, newJobChan)
+	sched2ui <- Feedback{add , time.Now(), job.id}
 }
 
 func (s *Scheduler) Serve() {
 	for current := range ui2sched {
 		job, command := current.j, current.cmd
-		if command == "add" {
+		if command == add {
 			s.runNewJob(job)
-		} else if command == "delete" || command == "modify" {
-			s.jobMap[job.id] <- "delete"
+		} else if command == remove || command == update {
+			s.jobMap[job.id] <- remove
 			delete(s.jobMap, job.id)
-			if command == "modify" {
+			if command == update {
 				s.runNewJob(job)
 			}
 		} else {
@@ -111,25 +126,25 @@ func (s *Scheduler) Serve() {
 
 // Run sets the job to the schedule and returns the pointer to the job so it may be
 // stopped or executed without waiting or an error.
-func (s *Scheduler) RunJob(j *Job, jobCmdChan <-chan string) {
+func (s *Scheduler) RunJob(j *Job, jobCmdChan <- chan string) {
 	next := j.sched.nextRun()
-
 	for {
 		select {
 		case cmd := <- jobCmdChan:
 			switch cmd {
-			case "stop":
+			case stop:
 				j.isStopped = true
-			case "start":
+			case restart:
 				j.isStopped = false
-			case "runNow":
+			case runNow:
 				go fetch()
-			case "delete":
+			case remove:
 				return
 			}
-		case <- time.After(next):
+			sched2ui <- Feedback{cmd , time.Now(),j.id}
+		case <- timeAfter(next):
 			if !j.isStopped {
-				go fetch()
+				go Fetch()
 				next= j.sched.nextRun()
 			}
 			if j.isOneTime {

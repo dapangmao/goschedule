@@ -6,6 +6,9 @@ import (
 	"log"
 )
 
+
+var Fetch = fetch
+
 func fetch() {
 	doc, err := goquery.NewDocument("http://metalsucks.net")
 	if err != nil {
