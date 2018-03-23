@@ -2,6 +2,7 @@
 
 ### Basic structure
 
+[![Build Status](https://travis-ci.org/dapangmao/gowatch.svg?branch=master)](https://travis-ci.org/dapangmao/gowatch)
 
 ```
 +---------------+             +------------------+
