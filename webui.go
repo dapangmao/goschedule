@@ -2,8 +2,6 @@ package main
 
 import (
 	"net/http"
-	"golang.org/x/tools/go/gcimporter15/testdata"
-	"reflect"
 	"strconv"
 )
 
@@ -13,7 +11,7 @@ func console(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func gowatch(port ...interface{}) {
+func webserver(port ...interface{}) {
 	var res string
 	var p interface{}
 	if len(port) == 1 {

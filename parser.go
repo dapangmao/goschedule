@@ -132,7 +132,7 @@ func (p *Parser) Parse() (*Job, error) {
 		if err != nil {
 			return nil, err
 		} else {
-			return &Job{p.id, result, false, isOneTime}, nil
+			return &Job{p.id, result, false, isOneTime, s}, nil
 		}
 }
 

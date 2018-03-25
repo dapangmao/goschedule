@@ -6,16 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//t1 := "every 5 hours"
-//t2 := "every 10:30"
-//t3 := "every monday 10:30"
-//
-//p := Parser{1, t1}
-//fmt.Println(p.Parse())
-//p = Parser{1, t2}
-//fmt.Println(p.Parse())
-//p = Parser{1, t3}
-//fmt.Println(p.Parse())
 
 
 func TestParseRecurrent(t *testing.T) {
