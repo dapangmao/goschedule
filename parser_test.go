@@ -13,9 +13,9 @@ func TestParseRecurrent(t *testing.T) {
 	p := Parser{1, s}
 	result, err := p.Parse()
 	assert.Nil(t, err,"Error should be nil")
-	assert.Equal(t, result.id, 1)
-	assert.Equal(t, result.sched.nextRun(), 5 * time.Hour)
-	assert.Equal(t, result.isStopped, false)
-	assert.Equal(t, result.isOneTime, false)
+	assert.Equal(t, 1, result.id)
+	assert.Equal(t, 5 * time.Hour, result.sched.nextRun())
+	assert.Equal(t, false, result.isStopped)
+	assert.Equal(t, false, result.isOneTime)
 }
 

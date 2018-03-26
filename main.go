@@ -2,15 +2,22 @@ package main
 
 import "sync"
 
-var stats = make(map[int]Feedback)
+var Entries = struct {
+	data map[int]Feedback
+	sync.Mutex
+}{
+	make(map[int]Feedback),
+	sync.Mutex{},
+}
+
+
 
 
 func getStats() {
-	var mu sync.Mutex
 	for fb := range sched2ui {
-		mu.Lock()
-		stats[fb.id] = fb
-		mu.Unlock()
+		Entries.Lock()
+		Entries.data[fb.id] = fb
+		Entries.Unlock()
 	}
 }
 

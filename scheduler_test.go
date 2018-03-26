@@ -7,6 +7,7 @@ import (
 )
 
 
+
 func init() {
 	Fetch = func(id int) {
 		sched2ui <- Feedback{"fetched", time.Now(), id}
@@ -49,17 +50,19 @@ func TestScheduler(t *testing.T) {
 	job, _ = p.Parse()
 	ui2sched <- Command{job, add}
 
-	time.Sleep(time.Second * 1)
 
 	job = NewActionOnlyJob(1)
 	ui2sched <- Command{job, remove}
 
+	time.Sleep(time.Second * 2)
 
-	t.Log("Debug the result map", stats)
+	Entries.Lock()
+	t.Log("Debug the result map", Entries.data)
 
-	assert.Equal(t, stats[1].message, "remove")
-	assert.Equal(t, stats[2].message, "fetched")
-	assert.Equal(t, stats[3].message, "fetched")
-	assert.Equal(t, len(sched.jobMap), 2)
+	assert.Equal(t, "remove", Entries.data[1].message)
+	assert.Equal(t, "fetched", Entries.data[2].message)
+	assert.Equal(t, "fetched", Entries.data[3].message)
+	Entries.Unlock()
+
 
 }
