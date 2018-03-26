@@ -5,8 +5,6 @@ import (
 	"strconv"
 )
 
-
-
 func console(w http.ResponseWriter, r *http.Request) {
 
 }

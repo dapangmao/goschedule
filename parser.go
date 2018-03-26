@@ -1,26 +1,24 @@
 package main
 
 import (
-	"strings"
-	"strconv"
-	"time"
 	"errors"
+	"strconv"
+	"strings"
+	"time"
 )
-
 
 var (
 	durationMap = map[string]string{"hour": "hour", "hours": "hour", "minute": "minute", "minutes": "minute",
-                                    "second": "second", "seconds": "second"}
+		"second": "second", "seconds": "second"}
 	weekdayMap = map[string]time.Weekday{"sunday": time.Sunday, "monday": time.Monday, "tuesday": time.Tuesday,
-									    "wendesday": time.Wednesday, "thursday": time.Thursday, "friday": time.Friday,
-									    "saturday": time.Saturday}
+		"wendesday": time.Wednesday, "thursday": time.Thursday, "friday": time.Friday,
+		"saturday": time.Saturday}
 )
 
 type Parser struct {
 	id int
-	s string
+	s  string
 }
-
 
 func (p *Parser) parseRecurrent(q, u string) (*recurrent, error) {
 	quantity, err := strconv.Atoi(q)
@@ -41,7 +39,6 @@ func (p *Parser) parseRecurrent(q, u string) (*recurrent, error) {
 	return &recurrent{quantity, unit}, nil
 }
 
-
 func (p *Parser) parseWeekly(weekday time.Weekday, time string) (*weekly, error) {
 	dailySched, err := p.parseDaily(time)
 	if err != nil {
@@ -50,13 +47,14 @@ func (p *Parser) parseWeekly(weekday time.Weekday, time string) (*weekly, error)
 	return &weekly{weekday, dailySched}, nil
 }
 
-
 func (p *Parser) parseDaily(time string) (*daily, error) {
 	splits := strings.Split(time, ":")
 	var timeArray = [3]int{0, 0, 0}
 	var i int
 	for _, s := range splits {
-		if len(s) == 0 {continue}
+		if len(s) == 0 {
+			continue
+		}
 		current, err := strconv.Atoi(s)
 		if err != nil {
 			if i > 2 {
@@ -79,7 +77,6 @@ func (p *Parser) parseDaily(time string) (*daily, error) {
 	return &daily{hour, minute, second}, nil
 }
 
-
 func (p *Parser) Parse() (*Job, error) {
 
 	var err error = nil
@@ -92,12 +89,16 @@ func (p *Parser) Parse() (*Job, error) {
 	}
 	splits := strings.Fields(s)
 
-	if len(splits) < 1 {goto notValid}
+	if len(splits) < 1 {
+		goto notValid
+	}
 
 	for k, v := range durationMap {
 		for i, x := range splits {
 			if x == k {
-				if i < 1 {goto notValid}
+				if i < 1 {
+					goto notValid
+				}
 				result, err = p.parseRecurrent(splits[i-1], v)
 				goto end
 			}
@@ -108,7 +109,7 @@ func (p *Parser) Parse() (*Job, error) {
 		for i, x := range splits {
 			if x == k {
 				var t string
-				if i == len(splits) - 1 {
+				if i == len(splits)-1 {
 					t = "0:0:0"
 				} else {
 					t = splits[i+1]
@@ -126,15 +127,12 @@ func (p *Parser) Parse() (*Job, error) {
 		}
 	}
 
-	notValid:
-		return nil, errors.New("Not a valid input format for any job scheduler.")
-	end:
-		if err != nil {
-			return nil, err
-		} else {
-			return &Job{p.id, result, false, isOneTime, s}, nil
-		}
+notValid:
+	return nil, errors.New("Not a valid input format for any job scheduler.")
+end:
+	if err != nil {
+		return nil, err
+	} else {
+		return &Job{p.id, result, false, isOneTime, s}, nil
+	}
 }
-
-
-

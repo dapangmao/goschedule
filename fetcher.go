@@ -6,7 +6,6 @@ import (
 	"log"
 )
 
-
 var Fetch = fetch
 
 func fetch(id int) {

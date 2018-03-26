@@ -1,12 +1,10 @@
 package main
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
-	"github.com/stretchr/testify/assert"
 )
-
-
 
 func init() {
 	Fetch = func(id int) {
@@ -50,7 +48,6 @@ func TestScheduler(t *testing.T) {
 	job, _ = p.Parse()
 	ui2sched <- Command{job, add}
 
-
 	job = NewActionOnlyJob(1)
 	ui2sched <- Command{job, remove}
 
@@ -63,6 +60,5 @@ func TestScheduler(t *testing.T) {
 	assert.Equal(t, "fetched", Entries.data[2].message)
 	assert.Equal(t, "fetched", Entries.data[3].message)
 	Entries.Unlock()
-
 
 }

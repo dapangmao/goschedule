@@ -10,9 +10,6 @@ var Entries = struct {
 	sync.Mutex{},
 }
 
-
-
-
 func getStats() {
 	for fb := range sched2ui {
 		Entries.Lock()
@@ -21,8 +18,6 @@ func getStats() {
 	}
 }
 
-
 func main() {
-
 
 }

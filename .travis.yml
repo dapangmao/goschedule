@@ -8,10 +8,16 @@ matrix:
     - go: 1.9
     - go: "1.10.x"
 
+env:
+  global:
+    - PATH=$HOME/gopath/bin:$PATH
+
 
 install:
   - go get -t ./...
+  - go get github.com/mattn/goveralls github.com/modocache/gover
+
 
 script:
-
-  - go test -v -race .
+  - go test -v -race -coverprofile=.coverprofile .
+  - goveralls -coverprofile=.coverprofile -service=travis-ci -repotoken $COVERALLS_TOKEN

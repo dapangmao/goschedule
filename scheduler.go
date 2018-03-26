@@ -4,28 +4,23 @@ import (
 	"time"
 )
 
-
 const (
-	remove = "remove"
-	add = "add"
-	stop = "stop"
+	remove  = "remove"
+	add     = "add"
+	stop    = "stop"
 	restart = "restart"
-	runNow = "runNow"
-	update = "update"
+	runNow  = "runNow"
+	update  = "update"
 )
-
 
 var timeAfter = time.After
 var ui2sched = make(chan Command)
 var sched2ui = make(chan Feedback)
 
-
 type Command struct {
 	job    *Job
 	action string
 }
-
-
 
 type scheduled interface {
 	nextRun() time.Duration
@@ -37,10 +32,8 @@ type Job struct {
 	sched     scheduled
 	isStopped bool
 	isOneTime bool
-	raw 	  string
-
+	raw       string
 }
-
 
 type recurrent struct {
 	quantity int
@@ -57,7 +50,7 @@ type daily struct {
 	sec  int
 }
 
-func (d daily) nextRun() time.Duration{
+func (d daily) nextRun() time.Duration {
 	now := time.Now()
 	year, month, day := now.Date()
 	date := time.Date(year, month, day, d.hour, d.min, d.sec, 0, time.Local)
@@ -88,8 +81,8 @@ func (w weekly) nextRun() time.Duration {
 
 type Feedback struct {
 	message string
-	time time.Time
-	id  int
+	time    time.Time
+	id      int
 }
 
 type Scheduler struct {
@@ -97,15 +90,13 @@ type Scheduler struct {
 }
 
 func NewActionOnlyJob(id int) *Job {
-	return &Job{id, nil,   false, false, ""}
+	return &Job{id, nil, false, false, ""}
 }
-
 
 func NewScheduler() *Scheduler {
 	j := make(map[int]chan string)
 	return &Scheduler{j}
 }
-
 
 func (s *Scheduler) runNewJob(job *Job) {
 	var newJobChan = make(chan string)
@@ -116,7 +107,7 @@ func (s *Scheduler) runNewJob(job *Job) {
 func (s *Scheduler) Serve() {
 	for current := range ui2sched {
 		job, act := current.job, current.action
-		sched2ui <- Feedback{act, time.Now(),job.id}
+		sched2ui <- Feedback{act, time.Now(), job.id}
 		if act == add {
 			s.runNewJob(job)
 		} else if act == remove || act == update {
@@ -133,7 +124,7 @@ func (s *Scheduler) Serve() {
 
 // Run sets the job to the schedule and returns the pointer to the job so it may be
 // stopped or executed without waiting or an error.
-func (s *Scheduler) RunJob(j *Job, actionChan <- chan string) {
+func (s *Scheduler) RunJob(j *Job, actionChan <-chan string) {
 	next := j.sched.nextRun()
 	for {
 		select {
@@ -148,10 +139,10 @@ func (s *Scheduler) RunJob(j *Job, actionChan <- chan string) {
 			case remove:
 				return
 			}
-		case <- timeAfter(next):
+		case <-timeAfter(next):
 			if !j.isStopped {
 				go Fetch(j.id)
-				next= j.sched.nextRun()
+				next = j.sched.nextRun()
 			}
 			if j.isOneTime {
 				return
@@ -159,4 +150,3 @@ func (s *Scheduler) RunJob(j *Job, actionChan <- chan string) {
 		}
 	}
 }
-
